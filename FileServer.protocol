@@ -1,0 +1,14 @@
+typestate FileServer {
+    INITIAL_STATE = {
+        boolean start(java.net.Socket): <true: AWATING_REQUEST, false: end>
+    }
+
+    AWATING_REQUEST = {
+        boolean hasRequest(): <true: REQUEST_PENDING, false: AWATING_REQUEST>,
+        void close(): end
+    }
+
+    REQUEST_PENDING = {
+        void serveRequest(): AWATING_REQUEST
+    }
+}

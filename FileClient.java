@@ -1,4 +1,5 @@
 import java.net.*;
+import java.util.ArrayList;
 import java.io.*;
 import jatyc.lib.Typestate;
 
@@ -23,20 +24,42 @@ public class FileClient {
 
   public void request(String filename) throws Exception {
     out.write("REQUEST\n".getBytes());
-    // TODO
+    out.write((filename + "\n").getBytes());
   }
 
-  // TODO
+  public Byte[] acceptResponse() throws Exception {
+    ArrayList<Byte> response = new ArrayList<Byte>();
+
+    // Read the response
+    int readByte = 0;
+    do {
+      readByte = in.read();
+      response.add((byte)readByte);
+    } while (readByte != 0);
+
+    // Cast it to a primitive array, since we can't handle generics
+    Byte[] res = new Byte[response.size()];
+    for (int i = 0; i < res.length; i++) {
+      res[i] = response.get(i);
+    }
+    return res;
+  }
 
   public void close() throws Exception {
-    // TODO
+    in.close();
+    if (!socket.isClosed()) {
+      socket.close();
+    }
   }
 
   public static void main(String[] args) throws Exception {
     FileClient client = new FileClient();
     if (client.start()) {
       System.out.println("File client started!");
-      // TODO
+      System.out.println("Asking for file example...");
+      client.request("example");
+      int bytesRead = client.acceptResponse().length;
+      System.out.println("Server gave us back " + bytesRead + " bytes!");
       client.close();
     } else {
       System.out.println("Could not start client!");

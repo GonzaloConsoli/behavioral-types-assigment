@@ -12,7 +12,13 @@ public class FileServerThread extends Thread {
       FileServer server = new FileServer();
       if (server.start(socket)) {
         System.out.println("File server started!");
-        // TODO
+        if (server.hasRequest()) {
+          System.out.println("Request found, waiting for filename to serve...");
+          server.serveRequest();
+          System.out.println("Served!");
+        } else {
+          System.out.println("No request found!");
+        }
         server.close();
       } else {
         System.out.println("Could not start server!");

@@ -1,4 +1,6 @@
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.io.*;
 import jatyc.lib.Typestate;
 
@@ -24,15 +26,33 @@ public class FileServer {
   public boolean hasRequest() throws Exception {
     String command = in.readLine();
     if (command != null && command.equals("REQUEST")) {
-      // TODO
+      return true;
     }
     return false;
   }
 
-  // TODO
+  public void serveRequest() throws Exception {
+    String filename = in.readLine();
+    if (filename != null) {
+      File f = new File(filename);
+      if (f.exists()) {
+        Path p = f.toPath();
+        if (p != null) {
+          byte[] response = Files.readAllBytes(p);
+          if (response != null) {
+            out.write(response);
+          }
+        }
+      }
+      out.write(0);
+    }
+  }
 
   public void close() throws Exception {
-    // TODO
+    in.close();
+    if (!socket.isClosed()) {
+      socket.close();
+    }
   }
 
   public static void main(String[] args) throws Exception {

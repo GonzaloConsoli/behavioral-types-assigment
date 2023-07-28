@@ -1,0 +1,14 @@
+typestate FileClient {
+    INITIAL_STATE = {
+        boolean start(): <true: STARTED, false: end>
+    }
+
+    STARTED = {
+        void request(String): REQUESTED,
+        void close(): end
+    }
+
+    REQUESTED = {
+        Byte[] acceptResponse(): STARTED
+    }
+}
