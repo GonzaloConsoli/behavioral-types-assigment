@@ -9,6 +9,10 @@ typestate FileClient {
     }
 
     REQUESTED = {
-        Byte[] acceptResponse(): STARTED
+        boolean isEof(): <true:STARTED, false:TRANSFERING>
+    }
+
+    TRANSFERING = {
+        byte acceptResponse(): REQUESTED
     }
 }

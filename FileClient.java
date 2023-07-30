@@ -9,6 +9,7 @@ public class FileClient {
   protected OutputStream out;
   protected BufferedReader in;
   protected int lastByte;
+  protected boolean isEof=false;
 
   public boolean start() {
     try {
@@ -27,22 +28,16 @@ public class FileClient {
     out.write((filename + "\n").getBytes());
   }
 
-  public Byte[] acceptResponse() throws Exception {
-    ArrayList<Byte> response = new ArrayList<Byte>();
-
-    // Read the response
-    int readByte = 0;
-    do {
-      readByte = in.read();
-      response.add((byte)readByte);
-    } while (readByte != 0);
-
-    // Cast it to a primitive array, since we can't handle generics
-    Byte[] res = new Byte[response.size()];
-    for (int i = 0; i < res.length; i++) {
-      res[i] = response.get(i);
+  public byte acceptResponse() throws Exception {
+    int readByte = in.read();
+    if (readByte == 0){
+      isEof = true;
     }
-    return res;
+    return (byte) readByte;
+  }
+
+  public boolean isEof(){
+    return isEof;
   }
 
   public void close() throws Exception {
@@ -58,8 +53,12 @@ public class FileClient {
       System.out.println("File client started!");
       System.out.println("Asking for file example...");
       client.request("example");
-      int bytesRead = client.acceptResponse().length;
-      System.out.println("Server gave us back " + bytesRead + " bytes!");
+      int counter = 0;
+      while( ! client.isEof() ){
+        client.acceptResponse();
+        counter++;
+      }
+      System.out.println("Server gave us back " + counter + " bytes!");
       client.close();
     } else {
       System.out.println("Could not start client!");

@@ -1,14 +1,27 @@
 typestate FileServer {
     INITIAL_STATE = {
-        boolean start(java.net.Socket): <true: AWATING_REQUEST, false: end>
+        boolean start(java.net.Socket): <true: AWAIT_REQUEST, false: end>
     }
 
-    AWATING_REQUEST = {
-        boolean hasRequest(): <true: REQUEST_PENDING, false: AWATING_REQUEST>,
+    AWAIT_REQUEST = {
+        boolean hasRequest(): <true: AWAIT_FILE_NAME, false: AWAIT_REQUEST>,
         void close(): end
     }
 
     REQUEST_PENDING = {
-        void serveRequest(): AWATING_REQUEST
+        boolean theresNextByte(): <true:TRANSFER, false:END_TRANSMISION>
     }
+
+    AWAIT_FILE_NAME = {
+        void readFileName(): REQUEST_PENDING
+    }
+
+    END_TRANSMISION = {
+        void sendNullByte(): AWAIT_REQUEST
+    }
+
+    TRANSFER = {
+      void sendByte(): REQUEST_PENDING
+    }
+
 }

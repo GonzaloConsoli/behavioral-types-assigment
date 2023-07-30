@@ -1,6 +1,9 @@
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.io.*;
 import jatyc.lib.Typestate;
 
@@ -10,6 +13,8 @@ public class FileServer {
   protected OutputStream out;
   protected BufferedReader in;
   protected String lastFilename;
+  protected byte[] fileContents;
+  protected int idxFileContents = 0;
 
   public boolean start(Socket s) {
     try {
@@ -31,21 +36,34 @@ public class FileServer {
     return false;
   }
 
-  public void serveRequest() throws Exception {
+  public void readFileName() throws Exception {
+    fileContents = new byte[] {};
     String filename = in.readLine();
     if (filename != null) {
       File f = new File(filename);
       if (f.exists()) {
         Path p = f.toPath();
         if (p != null) {
-          byte[] response = Files.readAllBytes(p);
-          if (response != null) {
-            out.write(response);
+          byte[] temp = Files.readAllBytes(p);
+          if (temp != null){
+            fileContents = temp;
           }
         }
       }
-      out.write(0);
     }
+
+  }
+
+  public boolean theresNextByte() {
+    return idxFileContents < fileContents.length;
+  }
+
+  public void sendByte() throws Exception {
+    out.write(fileContents[idxFileContents++]);
+  }
+
+  public void sendNullByte() throws Exception {
+    out.write(0);
   }
 
   public void close() throws Exception {

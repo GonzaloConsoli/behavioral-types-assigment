@@ -14,7 +14,11 @@ public class FileServerThread extends Thread {
         System.out.println("File server started!");
         if (server.hasRequest()) {
           System.out.println("Request found, waiting for filename to serve...");
-          server.serveRequest();
+          server.readFileName();
+          while(server.theresNextByte()){
+            server.sendByte();
+          }
+          server.sendNullByte();
           System.out.println("Served!");
         } else {
           System.out.println("No request found!");
