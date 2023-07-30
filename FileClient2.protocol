@@ -1,0 +1,19 @@
+typestate FileClient2 {
+    INITIAL_STATE = {
+        boolean start(): <true: STARTED, false: end>
+    }
+
+    STARTED = {
+        void request(String): REQUESTED,
+        void close(): end
+    }
+
+    REQUESTED = {
+        boolean isEof(): <true:STARTED, false:TRANSFERING>
+    }
+
+    TRANSFERING = {
+        byte acceptResponse(): REQUESTED,
+        String acceptResponseByLine(): REQUESTED
+    }
+}
