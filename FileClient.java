@@ -29,11 +29,11 @@ public class FileClient {
   }
 
   public byte acceptResponse() throws Exception {
-    int readByte = in.read();
+    byte readByte = new Integer(in.read()).byteValue();
     if (readByte == 0){
       isEof = true;
     }
-    return (byte) readByte;
+    return readByte;
   }
 
   public boolean isEof(){

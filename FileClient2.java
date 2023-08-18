@@ -5,11 +5,11 @@ public class FileClient2 extends FileClient {
 
     public String acceptResponseByLine() throws Exception {
         String line = "";
-        byte lastRead = (byte) 255;
+        byte lastRead = new Integer(255).byteValue();
         while (!isEof && lastRead != 10) {
-            lastRead = (byte) in.read();
+            lastRead = new Integer(in.read()).byteValue();
             if (lastRead != 0 && lastRead != 10) {
-                line = line + new String(new char[] { (char) lastRead });
+                line = line + new String(new byte[] { lastRead });
             } else if (lastRead == 0) {
                 isEof = true;
             }
